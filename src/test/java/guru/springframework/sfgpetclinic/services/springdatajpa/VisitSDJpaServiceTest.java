@@ -15,6 +15,8 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,49 +31,67 @@ class VisitSDJpaServiceTest {
 
     @Test
     void findAll() {
+        //given
         Set<Visit> visits = new HashSet<>();
-        when(repository.findAll()).thenReturn(visits);
+        given(repository.findAll()).willReturn(visits);
+        //when
         Set<Visit> foundVisits = service.findAll();
+        //then
         assertEquals(foundVisits, visits);
-        verify(repository).findAll();
+        then(repository).should().findAll();
     }
 
     @Test
     void findById() {
+        //given
         Visit visit = new Visit();
-        when(repository.findById(1L)).thenReturn(Optional.of(visit));
+        given(repository.findById(1L)).willReturn(Optional.of(visit));
+        //when
         Visit foundVisit = service.findById(1L);
+        //then
         assertEquals(foundVisit, visit);
-        verify(repository).findById(anyLong());
+        then(repository).should().findById(anyLong());
     }
 
     @Test
     void findById_notFound() {
-        when(repository.findById(1L)).thenReturn(Optional.empty());
+        //given
+        given(repository.findById(1L)).willReturn(Optional.empty());
+        //when
         Visit foundVisit = service.findById(1L);
+        //then
         assertEquals(null, foundVisit);
-        verify(repository).findById(anyLong());
+        then(repository).should().findById(anyLong());
     }
 
     @Test
     void save() {
+        //given
         Visit visit = new Visit();
-        when(repository.save(visit)).thenReturn(visit);
+        given(repository.save(visit)).willReturn(visit);
+        //when
         Visit savedVisit = service.save(visit);
+        //then
         assertEquals(savedVisit, visit);
-        verify(repository).save(any(Visit.class));
+        then(repository).should().save(any(Visit.class));
     }
 
     @Test
     void delete() {
+        //given
         Visit visit = new Visit();
+        //when
         service.delete(visit);
-        verify(repository).delete(visit);
+        //then
+        then(repository).should().delete(visit);
     }
 
     @Test
     void deleteById() {
+        //given - none
+        //when
         service.deleteById(1L);
-        verify(repository).deleteById(1L);
+        //then
+        then(repository).should().deleteById(1L);
     }
 }

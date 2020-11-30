@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,32 +26,49 @@ class SpecialitySDJpaServiceTest {
 
     @Test
     void deleteByIdTest() {
+        //given - none
+
+        //when
         specialitySDJpaService.deleteById(1L);
         specialitySDJpaService.deleteById(1L);
-        verify(specialtyRepository, atLeastOnce()).deleteById(1L);
-        verify(specialtyRepository, atMost(5)).deleteById(1L);
+        //then
+        then(specialtyRepository).should(times(2)).deleteById(1L);
     }
 
     @Test
     void deleteByIdTest_never() {
+        //given - none
+
+        //when
         specialitySDJpaService.deleteById(1L);
         specialitySDJpaService.deleteById(1L);
 
-        verify(specialtyRepository, never()).deleteById(5L);
+        //then
+        then(specialtyRepository).should(atLeastOnce()).deleteById(1L);
+        then(specialtyRepository).should(never()).deleteById(5L);
     }
 
     @Test
     void deleteTest(){
-        specialitySDJpaService.delete(new Speciality());
+        //given
+        Speciality speciality = new Speciality();
+        //when
+        specialitySDJpaService.delete(speciality);
+        //then
+        then(specialtyRepository).should().delete(any(Speciality.class));
     }
 
     @Test
     void findById(){
+        //given
         Speciality speciality = new Speciality();
-        when(specialtyRepository.findById(1L)).thenReturn(Optional.of(speciality));
+        given(specialtyRepository.findById(1L)).willReturn(Optional.of(speciality));
+        //when
         Speciality foundSpeciality = specialitySDJpaService.findById(1L);
+        //then
         assertNotNull(foundSpeciality);
-        verify(specialtyRepository).findById(1L);
+        then(specialtyRepository).should().findById(1L);
+        then(specialtyRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test
